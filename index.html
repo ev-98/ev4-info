@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Portfolio</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-right: 5px;
+        }
+        nav span {
+            color: #999;
+            margin-right: 5px;
+        }
+        main {
+            padding: 20px;
+        }
+        header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 8px 0;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .file-link {
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <nav id="breadcrumb">
+        <a href="#" onclick="loadPage('home')">home</a>
+    </nav>
+    <main id="content">
+        <!-- Content loads here -->
+    </main>
+
+    <script>
+        const pages = {
+            home: {
+                breadcrumb: ['home'],
+                content: `
+                    <ul>
+                        <li><a href="#" onclick="loadPage('about')">about</a></li>
+                        <li><a href="#" onclick="loadPage('projects')">projects</a></li>
+                        <li><a href="#" onclick="loadPage('feedback')">feedback</a></li>
+                    </ul>
+                `
+            },
+            about: {
+                breadcrumb: ['home', 'about'],
+                content: `
+                    <ul>
+                        <li><a class="file-link" href="#" onclick="loadPage('about_txt')">about.txt</a></li>
+                        <li><a class="file-link" href="resume.pdf" download>resume.pdf</a></li>
+                    </ul>
+                `
+            },
+            about_txt: {
+                breadcrumb: ['home', 'about', 'about.txt'],
+                content: `<pre>This is a sample about.txt file.\nI am a developer who enjoys building minimal, functional designs.</pre>`
+            },
+            projects: {
+                breadcrumb: ['home', 'projects'],
+                content: `
+                    <ul>
+                        <li>Project One - A cool app</li>
+                        <li>Project Two - Another cool app</li>
+                        <li>Project Three - Yet another app</li>
+                    </ul>
+                `
+            },
+            feedback: {
+                breadcrumb: ['home', 'feedback'],
+                content: `<p><em>Work in progress...</em></p>`
+            }
+        };
+
+        function loadPage(page) {
+            const data = pages[page];
+            const breadcrumbNav = data.breadcrumb
+                .map((item, index) => {
+                    if (index === data.breadcrumb.length - 1) {
+                        return `<span>${item}</span>`;
+                    } else {
+                        return `<a href="#" onclick=\"loadPage('${item}')\">${item}</a>`;
+                    }
+                })
+                .join(' / ');
+
+            document.getElementById('breadcrumb').innerHTML = breadcrumbNav;
+            let contentHTML = '';
+            if (page === 'home') {
+                contentHTML += `<header>ev4</header>`;
+            }
+            contentHTML += data.content;
+            document.getElementById('content').innerHTML = contentHTML;
+        }
+
+        // Load home by default
+        loadPage('home');
+    </script>
+</body>
+</html>
