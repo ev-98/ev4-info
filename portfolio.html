@@ -654,13 +654,21 @@
 
             const saved = JSON.parse(localStorage.getItem("comments") || "[]");
 
+
+            function escapeHTML(str) {
+                return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+            }
+
             commentList.innerHTML = saved.map((c) => {
                 return `
                     <div style="margin-bottom: 8px;">
                         <div style="color: ${c.color}; font-weight: bold; font-size: 0.9em;">
                             Anonymous on ${c.timestamp}
                         </div>
-                        <p style="margin: 2px 0 0 0;">${c.text}</p>
+                        <p style="margin: 2px 0 0 0;">${escapeHTML(c.text).replace(/\n/g, '<br>')}</p>
                     </div>
                 `;
             }).join("");
@@ -696,7 +704,7 @@
             }
         }
 
-        localStorage.removeItem("comments");
+        //localStorage.removeItem("comments");
 
         
     </script>
