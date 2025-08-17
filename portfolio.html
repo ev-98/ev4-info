@@ -113,7 +113,13 @@
 
             feedback: {
                 breadcrumb: ['home', 'feedback'],
-                content: `<p><em>Work in progress...</em></p>`
+                content: `        <div id="feedback-section">
+            <h3>Leave a comment</h3>
+            <textarea id="comment-input" rows="4" cols="50" style="width:100%; max-width:500px;"></textarea><br>
+            <button id="submit-comment" style="margin-top: 8px;">Submit</button>
+            <h3>Comments</h3>
+            <div id="comment-list"></div>
+        </div>`
             }
         };
 
@@ -634,6 +640,8 @@
             setInterval(update, 100); // update 10x per second
             }
 
+
+        
     </script>
 </body>
 </html>
