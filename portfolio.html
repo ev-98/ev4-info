@@ -76,7 +76,7 @@
     </main>
 
     <script>
-        // Portfolio site pages
+        //site pages
         const pages = {
             home: {
                 breadcrumb: ['home'],
@@ -113,14 +113,14 @@
 
             feedback: {
                 breadcrumb: ['home', 'feedback'],
-                content: `        <div id="feedback-section">
-            <h3>Leave a comment</h3>
-            <textarea id="comment-input" rows="4" cols="50" style="width:100%; max-width:500px;"></textarea><br>
-            <button id="submit-comment" style="margin-top: 8px;">Submit</button>
-            <h3>Comments</h3>
-            <div id="comment-list"></div>
-        </div>`
-            }
+                content: `<div id="feedback-section">
+                        <h3>Leave a comment</h3>
+                        <textarea id="comment-input" rows="4" cols="50" style="width:100%; max-width:500px;"></textarea><br>
+                        <button id="submit-comment" style="margin-top: 8px;">Submit</button>
+                        <h3>Comments</h3>
+                        <div id="comment-list"></div>
+                        </div>`
+                        }
         };
 
         function loadPage(page) {
@@ -142,9 +142,12 @@
             if (document.getElementById("age")) {
                 startLiveAge();
             }
+            if (page === "feedback") {
+                initFeedbackPage();
+            }
         }
 
-        // Load home by default
+        //load home by default
         loadPage('home');
 
 
@@ -625,6 +628,7 @@
 
         playAscii();
 
+        //live age function
         function startLiveAge() {
             const birthDate = new Date("1998-04-20T08:00:00");
 
@@ -632,14 +636,67 @@
                 const now = new Date();
                 const diffMs = now - birthDate;
 
-                const years = diffMs / (1000 * 60 * 60 * 24 * 365.25); // fractional years
+                const years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
                 document.getElementById("age").textContent = years.toFixed(9); 
             }
 
-            update(); // initial call
-            setInterval(update, 100); // update 10x per second
+            update();
+            setInterval(update, 100);
             }
 
+        
+        //comments functions
+        const commentColors = ['#04D391', '#FF9900', '#FF0000', '#1181F1', '#FFFF00'];
+
+        function loadComments() {
+            const commentList = document.getElementById("comment-list");
+            if (!commentList) return;
+
+            const saved = JSON.parse(localStorage.getItem("comments") || "[]");
+
+            commentList.innerHTML = saved.map((c) => {
+                return `
+                    <div style="margin-bottom: 8px;">
+                        <div style="color: ${c.color}; font-weight: bold; font-size: 0.9em;">
+                            Anonymous on ${c.timestamp}
+                        </div>
+                        <p style="margin: 2px 0 0 0;">${c.text}</p>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function initFeedbackPage() {
+            const btn = document.getElementById("submit-comment");
+            const input = document.getElementById("comment-input");
+            const commentList = document.getElementById("comment-list");
+
+            if (!btn || !input || !commentList) return;
+
+            loadComments();
+
+            if (!btn.dataset.bound) {
+                btn.addEventListener("click", () => {
+                    const text = input.value.trim();
+                    if (text) {
+                        const saved = JSON.parse(localStorage.getItem("comments") || "[]");
+                        const now = new Date();
+                        const timestamp = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                        const color = commentColors[Math.floor(Math.random() * commentColors.length)];
+
+                        const commentObj = { text, timestamp, color };
+                        saved.push(commentObj);
+                        localStorage.setItem("comments", JSON.stringify(saved));
+
+                        loadComments();
+                        input.value = "";
+                    }
+                });
+                btn.dataset.bound = "true";
+            }
+        }
+
+        localStorage.removeItem("comments");
 
         
     </script>
