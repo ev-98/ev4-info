@@ -127,7 +127,7 @@
 <body>
     <div id="ascii-bg">Loading animation...</div>
     <nav id="breadcrumb">
-        <a href="#" onclick="loadPage('home')">home</a>
+        <a href="#" data-page="about">home</a>
     </nav>
     <main id="content">
     </main>
@@ -144,17 +144,17 @@
                 breadcrumb: ['home'],
                 content: `<header>ev4</header>
                     <ul>
-                        <li><a href="#" onclick="loadPage('about')">about</a></li>
-                        <li><a href="#" onclick="loadPage('projects')">projects</a></li>
-                        <li><a href="#" onclick="loadPage('feedback')">feedback</a></li>
+                        <li><a href="#" data-page="about">about</a></li>
+                        <li><a href="#" data-page="projects">projects</a></li>
+                        <li><a href="#" data-page="feedback">feedback</a></li>
                     </ul>`
             },
             about: {
                 breadcrumb: ['home', 'about'],
                 content: `<ul>
-                        <li><a class="file-link" href="#" onclick="loadPage('about_txt')">about.txt</a></li>
+                        <li><a class="file-link" href="#" data-page="about_txt">about.txt</a></li>
                         <li><a class="file-link" href="resume.pdf" target="_blank" rel="noopener noreferrer">resume.pdf</a></li>
-                        <li><a class="file-link" href="#" onclick="loadPage('links')">links</a></li>
+                        <li><a class="file-link" href="#" data-page="links">links</a></li>
                     </ul>`
             },
             about_txt: {
@@ -194,38 +194,9 @@
                         }
         };
 
-        function loadPage(page) {
-            const data = pages[page];
-            const breadcrumbNav = data.breadcrumb
-                .map((item, index) => {
-                    if (index === data.breadcrumb.length - 1) {
-                        return `<span>${item}</span>`;
-                    } else {
-                        return `<a href="#" onclick=\"loadPage('${item}')\">${item}</a>`;
-                    }
-                })
-                .join(' / ');
-
-            document.getElementById('breadcrumb').innerHTML = breadcrumbNav;
-            let contentHTML = '';
-            contentHTML += data.content;
-            document.getElementById('content').innerHTML = contentHTML;
-            if (document.getElementById("age")) {
-                startLiveAge();
-            }
-            if (page === "feedback") {
-                initFeedbackPage('comment-input', 'submit-comment', 'comment-list');
-            }
-        }
-
-        //load home by default
-        loadPage('home');
-
-
+        //animation function
         var asciicolor = '#0000FF';
         var currentAnimation = animations[Math.floor(Math.random() * animations.length)];
-
-        //animation function
         async function playAscii() {
             var frames = currentAnimation.length;
             for (var i = 0; i < frames; i++) {
@@ -252,6 +223,39 @@
             update();
             setInterval(update, 100);
             }
+
+
+        function loadPage(page) {
+            const data = pages[page];
+            if (!data) return;
+
+            const breadcrumbNav = data.breadcrumb
+                .map((item, index) => {
+                    if (index === data.breadcrumb.length - 1) {
+                        return `<span>${item}</span>`;
+                    } else {
+                        return `<a href="#" data-page="${item}">${item}</a>`;
+                    }
+                })
+                .join(' / ');
+
+            document.getElementById('breadcrumb').innerHTML = breadcrumbNav;
+            document.getElementById('content').innerHTML = data.content;
+
+            if (page === "about_txt") startLiveAge();
+            if (page === "feedback") initFeedbackPage('comment-input', 'submit-comment', 'comment-list');
+
+            document.querySelectorAll('[data-page]').forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    const target = e.currentTarget.dataset.page;
+                    loadPage(target);
+                });
+            });
+        }
+
+        //load home by default
+        loadPage('home');
 
     </script>
 </body>
